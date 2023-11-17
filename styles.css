@@ -2,6 +2,10 @@
   font-size: 24px;
 }
 
+.hide {
+  display: none;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -46,4 +50,26 @@ ul {
 
 #project-header {
   font-weight: bold;
+}
+
+#task-list > li {
+  display: flex;
+}
+
+#task-list .project-name {
+  margin-right: auto;
+}
+
+#task-adder {
+  display: flex;
+  flex-direction: column;
+}
+
+#task-adder > button#add-task {
+  text-align: start;
+}
+
+form {
+  display:flex;
+  flex-direction: column;
 }
