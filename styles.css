@@ -1,0 +1,45 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 2fr 16fr 1fr;
+  grid-template-areas:
+    "header"
+    "main"
+    "footer";
+}
+
+body > * {
+  border-top: 4px solid black;
+}
+
+header {
+  grid-area: header;
+}
+
+main {
+  grid-area: main;
+  display: grid;
+  grid-template-columns: 300px 1fr;
+}
+
+main > * {
+  border-right: 4px solid black;
+}
+
+footer {
+  grid-area: footer;
+}
+
+ul {
+  list-style: none;
+}
+
+#project-header {
+  font-weight: bold;
+}
