@@ -10,16 +10,13 @@ export default class Project {
     this.name = newName;
   }
 
-  addTask(taskName) {
+  addTask(taskName, description, dueDate) {
     if (this.tasks.some((task) => task.name === taskName)) {
-      alert("The task name must be unique in the project");
+      alert("Task name must be unique");
       return;
     }
-
-    const task = new Task(taskName);
-    console.log("Add", task);
-
-    this.tasks.push(task);
+    
+    this.tasks.push(new Task(taskName, description, dueDate));
   }
 
   removeTask(taskName) {
