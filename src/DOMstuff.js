@@ -1,9 +1,10 @@
 import Project from "./project.js";
 import Task from "./task.js";
+import projectList from "./storage.js";
 import { isSameDay, isSameWeek } from "date-fns";
 
 export default class DOMstuff {
-  static loadTodayTasks(projectList) {
+  static loadTodayTasks() {
     clearMainSection();
     changeTabNameTo("Today");
     const task_list = document.createElement("ul");
@@ -23,7 +24,27 @@ export default class DOMstuff {
     main_section.appendChild(task_list);
   }
 
-  static loadProjectList(projectList) {
+  static loadThisWeekTasks() {
+    clearMainSection();
+    changeTabNameTo("This week");
+    const task_list = document.createElement("ul");
+    task_list.id = "task-list";
+    for (let projectObject of projectList) {
+      for (let taskObject of projectObject.tasks) {
+        if (isSameWeek(taskObject.dueDate, new Date())) {
+          const this_week_task = createTaskDOM(taskObject, projectObject);
+          this_week_task.querySelector(
+            ".task-name"
+          ).textContent += ` (${projectObject.name})`;
+          task_list.appendChild(this_week_task);
+        }
+      }
+    }
+    const main_section = document.querySelector("#main-section");
+    main_section.appendChild(task_list);
+  }
+
+  static loadProjectList() {
     //render project list
     const project_list = document.querySelector("#project-list");
     for (let projectObject of projectList) {
@@ -34,7 +55,7 @@ export default class DOMstuff {
     //render project adder
     project_list.insertAdjacentElement(
       "afterend",
-      createProjectAdder(projectList)
+      createProjectAdder()
     );
   }
 
@@ -253,7 +274,7 @@ function createTaskAdder(projectObject) {
   return task_adder;
 }
 
-function createProjectAdder(projectList) {
+function createProjectAdder() {
   const project_adder = document.createElement("div");
   project_adder.id = "project-adder";
 
@@ -298,11 +319,11 @@ function createProjectAdder(projectList) {
     const newProjectDOM = createProjectDOM(newProjectObject);
     document.querySelector("#project-list").appendChild(newProjectDOM);
 
-    resetProjectAdder(projectList);
+    resetProjectAdder();
   });
 
   cancel_button.addEventListener("click", () => {
-    resetProjectAdder(projectList);
+    resetProjectAdder();
   });
 
   add_project_form.appendChild(name_input);
@@ -325,7 +346,7 @@ function resetTaskAdder(projectObject) {
   main_section.appendChild(createTaskAdder(projectObject));
 }
 
-function resetProjectAdder(projectList) {
+function resetProjectAdder() {
   //remove project adder from the DOM
   const project_adder = document.querySelector("#project-adder");
   project_adder.parentElement.removeChild(project_adder);
@@ -334,6 +355,17 @@ function resetProjectAdder(projectList) {
   const project_list = document.querySelector("#project-list");
   project_list.insertAdjacentElement(
     "afterend",
-    createProjectAdder(projectList)
+    createProjectAdder()
   );
 }
+
+function changeTabTo(navItem, loadTabFunction){
+  if (!navItem.classList.contains('onpage')) {
+    loadTabFunction();
+    const previous_page = document.querySelector(".onpage");
+    if (previous_page) previous_page.classList.remove("onpage");
+    navItem.classList.add("onpage");
+  }
+}
+
+export { changeTabTo };
