@@ -1,5 +1,3 @@
-import Task from "./task.js";
-
 export default class Project {
   constructor(name) {
     this.name = name;
@@ -10,13 +8,8 @@ export default class Project {
     this.name = newName;
   }
 
-  addTask(taskName, description, dueDate) {
-    if (this.tasks.some((task) => task.name === taskName)) {
-      alert("Task name must be unique");
-      return;
-    }
-    
-    this.tasks.push(new Task(taskName, description, dueDate));
+  addTask(taskObject) { 
+    this.tasks.push(taskObject);
   }
 
   removeTask(taskName) {
