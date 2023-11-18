@@ -1,5 +1,7 @@
 :root {
   font-size: 24px;
+  --background-color: #fff;
+  font-family: sans-serif;
 }
 
 .hide {
@@ -7,19 +9,22 @@
 }
 
 * {
+  font-size: 1rem;
   margin: 0;
   padding: 0;
+  list-style: none;
 }
 
 body {
   height: 100vh;
   display: grid;
   grid-template-columns: 1fr;
-  grid-template-rows: 2fr 16fr 1fr;
+  grid-template-rows: 125px 1fr 75px;
   grid-template-areas:
     "header"
     "main"
     "footer";
+  background-color: var(--background-color);
 }
 
 body > * {
@@ -28,6 +33,10 @@ body > * {
 
 header {
   grid-area: header;
+  font-size: 48px;
+  font-weight: bold;
+  padding-top: 1rem;
+  padding-left: 1rem;
 }
 
 main {
@@ -36,40 +45,86 @@ main {
   grid-template-columns: 300px 1fr;
 }
 
-main > * {
+nav {
   border-right: 4px solid black;
+  padding: 0.5rem;
 }
 
-footer {
-  grid-area: footer;
+nav li {
+  padding-left: 0.5rem;
 }
 
-ul {
-  list-style: none;
+.project:hover {
+  border-left: 4px solid black;
+  cursor: pointer;
+}
+
+.project.onpage {
+  cursor: default;
+  border-left: 4px solid black;
+}
+
+#add-project,
+#add-task {
+  text-align: start;
+  padding: 2px 4px;
+  font-size: 18px;
+  margin-top: 8px;
 }
 
 #project-header {
   font-weight: bold;
 }
 
-#task-list > li {
-  display: flex;
+#tab-name {
+  font-weight: bold;
+  margin: 2rem;
+  margin-bottom: 1rem;
+  font-size: 36px;
 }
 
-#task-list .project-name {
+.task {
+  display: flex;
+  margin-left: 3rem;
+  padding-bottom: 8px;
+  margin-top: 8px;
+  margin-right: 1rem;
+  border-bottom: 1px solid #ccc
+}
+
+.task .project-name {
   margin-right: auto;
+}
+
+.task .project-name ~ * {
+  margin-left: 8px;
+}
+
+.task .project-name ~ button {
+  padding-left: 8px;
+  padding-right: 8px;
 }
 
 #task-adder {
   display: flex;
   flex-direction: column;
-}
-
-#task-adder > button#add-task {
-  text-align: start;
+  margin-right: 1rem;
+  margin-left: 3rem;
 }
 
 form {
   display:flex;
   flex-direction: column;
+}
+
+form > input,
+form > textarea {
+  font-size: 20px;
+  padding: 4px;
+}
+
+footer {
+  grid-area: footer;
+  text-align:center;
+  padding-top: 1rem;
 }
