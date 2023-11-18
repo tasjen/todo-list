@@ -38,7 +38,7 @@ function createTask(taskObject, projectObject) {
 
   const project_name = document.createElement("p");
   project_name.classList.add("project-name");
-  if (projectObject.name === "common") {
+  if (projectObject.name === "none") {
     project_name.textContent = "";
   } else project_name.textContent = projectObject.name;
 
@@ -61,6 +61,7 @@ function createTask(taskObject, projectObject) {
   remove.textContent = "remove";
   remove.addEventListener("click", () => {
     task.parentElement.removeChild(task);
+    projectObject.removeTask(taskObject.name);
   });
 
   task.appendChild(task_name);
@@ -127,17 +128,11 @@ function createTaskAdder(projectObject) {
       projectObject
     );
     document.querySelector("#task-list").appendChild(task);
-    task_adder.parentElement.removeChild(task_adder);
-    document
-      .querySelector("#main-section")
-      .appendChild(createTaskAdder(projectObject));
+    resetTaskAdder(projectObject);
   });
 
   cancel_button.addEventListener("click", () => {
-    task_adder.parentElement.removeChild(task_adder);
-    document
-      .querySelector("#main-section")
-      .appendChild(createTaskAdder(projectObject));
+    resetTaskAdder(projectObject);
   });
 
   add_task_form.appendChild(name_input);
@@ -150,4 +145,12 @@ function createTaskAdder(projectObject) {
   task_adder.appendChild(add_task_form);
 
   return task_adder;
+}
+
+function resetTaskAdder(projectObject) {
+  const task_adder = document.querySelector('#task-adder');
+  task_adder.parentElement.removeChild(task_adder);
+  
+  const main_section = document.querySelector('#main-section')
+  main_section.appendChild(createTaskAdder(projectObject));
 }
