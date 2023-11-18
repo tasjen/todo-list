@@ -53,10 +53,7 @@ export default class DOMstuff {
     }
 
     //render project adder
-    project_list.insertAdjacentElement(
-      "afterend",
-      createProjectAdder()
-    );
+    project_list.insertAdjacentElement("afterend", createProjectAdder());
   }
 
   static loadTaskList(projectObject) {
@@ -127,6 +124,7 @@ function createTaskDOM(taskObject, projectObject) {
   remove.addEventListener("click", () => {
     task.parentElement.removeChild(task);
     projectObject.removeTask(taskObject.name);
+    checkEmptyTaskMessage();
   });
 
   task.appendChild(task_name);
@@ -254,6 +252,7 @@ function createTaskAdder(projectObject) {
     const newTaskDOM = createTaskDOM(newTaskObject, projectObject);
     document.querySelector("#task-list").appendChild(newTaskDOM);
 
+    checkEmptyTaskMessage()
     resetTaskAdder(projectObject);
   });
 
@@ -314,11 +313,11 @@ function createProjectAdder() {
     }
 
     const newProjectObject = new Project(name_input.value);
-
     projectList.push(newProjectObject);
+    
     const newProjectDOM = createProjectDOM(newProjectObject);
     document.querySelector("#project-list").appendChild(newProjectDOM);
-
+    
     resetProjectAdder();
   });
 
@@ -353,18 +352,29 @@ function resetProjectAdder() {
 
   //create and add project adder to the DOM
   const project_list = document.querySelector("#project-list");
-  project_list.insertAdjacentElement(
-    "afterend",
-    createProjectAdder()
-  );
+  project_list.insertAdjacentElement("afterend", createProjectAdder());
 }
 
-function changeTabTo(navItem, loadTabFunction){
-  if (!navItem.classList.contains('onpage')) {
+function changeTabTo(navItem, loadTabFunction) {
+  if (!navItem.classList.contains("onpage")) {
     loadTabFunction();
     const previous_page = document.querySelector(".onpage");
     if (previous_page) previous_page.classList.remove("onpage");
     navItem.classList.add("onpage");
+  }
+}
+
+function checkEmptyTaskMessage() {
+  const task_list = document.querySelector("#task-list");
+  const tasks = document.querySelectorAll(".task");
+  const no_task = document.createElement("p");
+  no_task.classList.add("task");
+  no_task.textContent = "No tasks here.";
+  if (!tasks.length) {
+    task_list.appendChild(no_task);
+  }
+  else if (task_list.firstElementChild.textContent === "No tasks here.") {
+    task_list.removeChild(task_list.firstElementChild);
   }
 }
 
