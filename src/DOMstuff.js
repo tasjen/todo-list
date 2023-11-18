@@ -49,7 +49,8 @@ function createTask(taskObject, projectObject) {
 
   const due_date = document.createElement("p");
   due_date.classList.add("due-date");
-  due_date.textContent = taskObject.dueDate;
+  due_date.textContent = taskObject.dueDate.toLocaleDateString();
+
 
   const edit = document.createElement("button");
   edit.classList.add("edit");
@@ -121,7 +122,7 @@ function createTaskAdder(projectObject) {
     projectObject.addTask(
       name_input.value,
       description_input.value,
-      date_input.value
+      new Date(date_input.value)
     );
     const task = createTask(
       projectObject.tasks[projectObject.tasks.length - 1],
