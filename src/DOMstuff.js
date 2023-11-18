@@ -1,4 +1,4 @@
-import Project from "./project";
+import Project from "./project.js";
 import Task from "./task.js";
 
 export default class DOMstuff {
@@ -45,7 +45,7 @@ function createTaskDOM(taskObject, projectObject) {
   task.classList.add("task");
 
   const task_name = document.createElement("p");
-  task_name.classList.add("task_name");
+  task_name.classList.add("task-name");
   task_name.textContent = taskObject.name;
 
   const project_name = document.createElement("p");
@@ -53,6 +53,20 @@ function createTaskDOM(taskObject, projectObject) {
   if (projectObject.name === "none") {
     project_name.textContent = "";
   } else project_name.textContent = projectObject.name;
+
+  const priority = document.createElement("p");
+  priority.classList.add("priority");
+  switch (taskObject.priority) {
+    case 1:
+      priority.textContent = "low";
+      break;
+    case 2:
+      priority.textContent = "medium";
+      break;
+    case 3:
+      priority.textContent = "high";
+      break;
+  }
 
   const description = document.createElement("button");
   description.classList.add("description");
@@ -82,6 +96,7 @@ function createTaskDOM(taskObject, projectObject) {
 
   task.appendChild(task_name);
   task.appendChild(project_name);
+  task.appendChild(priority);
   task.appendChild(description);
   task.appendChild(due_date);
   task.appendChild(edit);
@@ -96,7 +111,12 @@ function createProjectDOM(projectObject) {
   project.textContent = projectObject.name;
 
   project.addEventListener("click", () => {
-    DOMstuff.loadTaskList(projectObject);
+    if (!project.classList.contains("onpage")) {
+      DOMstuff.loadTaskList(projectObject);
+      const last_page = document.querySelector(".project.onpage");
+      if (last_page) last_page.classList.remove("onpage");
+      project.classList.add("onpage");
+    }
   });
   return project;
 }
@@ -123,7 +143,6 @@ function createProjectAdder(projectList) {
   name_input.id = "name";
   name_input.placeholder = "Task name";
   name_input.required = true;
-  // name_input.autofocus = true;
   const confirm_button = document.createElement("button");
   confirm_button.type = "submit";
   confirm_button.id = "confirm-project";
@@ -135,6 +154,7 @@ function createProjectAdder(projectList) {
 
   add_project_form.addEventListener("submit", (event) => {
     event.preventDefault();
+    //check unique project name
     if (projectList.some((project) => project.name === name_input.value)) {
       alert("Project name must be unique");
       return;
@@ -186,8 +206,7 @@ function createTaskAdder(projectObject) {
   name_input.placeholder = "Task name";
   name_input.required = true;
   name_input.autofocus = true;
-  const description_input = document.createElement("input");
-  description_input.type = "text";
+  const description_input = document.createElement("textarea");
   description_input.id = "description";
   description_input.placeholder = "Task description";
   description_input.required = true;
@@ -195,6 +214,42 @@ function createTaskAdder(projectObject) {
   date_input.type = "date";
   date_input.id = "date";
   date_input.required = true;
+
+  const low_radio = document.createElement("input");
+  low_radio.type = "radio";
+  low_radio.name = "priority";
+  low_radio.id = "low";
+  low_radio.value = 1;
+  low_radio.required = true;
+  const medium_radio = document.createElement("input");
+  medium_radio.type = "radio";
+  medium_radio.name = "priority";
+  medium_radio.id = "medium";
+  medium_radio.value = 2;
+  const high_radio = document.createElement("input");
+  high_radio.type = "radio";
+  high_radio.name = "priority";
+  high_radio.id = "high";
+  high_radio.value = 3;
+
+  const low_radio_label = document.createElement("label");
+  low_radio_label.htmlFor = "low";
+  low_radio_label.textContent = "Low";
+  const medium_radio_label = document.createElement("label");
+  medium_radio_label.htmlFor = "medium";
+  medium_radio_label.textContent = "Medium";
+  const high_radio_label = document.createElement("label");
+  high_radio_label.htmlFor = "high";
+  high_radio_label.textContent = "High";
+
+  const priority_input_container = document.createElement("div");
+  priority_input_container.appendChild(low_radio);
+  priority_input_container.appendChild(low_radio_label);
+  priority_input_container.appendChild(medium_radio);
+  priority_input_container.appendChild(medium_radio_label);
+  priority_input_container.appendChild(high_radio);
+  priority_input_container.appendChild(high_radio_label);
+
   const confirm_button = document.createElement("button");
   confirm_button.type = "submit";
   confirm_button.id = "confirm-task";
@@ -214,7 +269,10 @@ function createTaskAdder(projectObject) {
     const newTaskObject = new Task(
       name_input.value,
       description_input.value,
-      new Date(date_input.value)
+      new Date(date_input.value),
+      +Array.from(document.querySelectorAll("input[name='priority']")).find(
+        (radio) => radio.checked === true
+      ).value //get the checked value(priority) from all radio buttons
     );
     projectObject.addTask(newTaskObject);
 
@@ -231,6 +289,7 @@ function createTaskAdder(projectObject) {
   add_task_form.appendChild(name_input);
   add_task_form.appendChild(description_input);
   add_task_form.appendChild(date_input);
+  add_task_form.appendChild(priority_input_container);
   add_task_form.appendChild(confirm_button);
   add_task_form.appendChild(cancel_button);
 
