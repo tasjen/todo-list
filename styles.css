@@ -100,6 +100,11 @@ nav li {
   margin-left: 8px;
 }
 
+.task p {
+  position: relative;
+  top: 2px;
+}
+
 .task .project-name ~ button {
   padding-left: 8px;
   padding-right: 8px;
