@@ -23,6 +23,6 @@ export default class Project {
     const removedTask = this.tasks.find(task => task.name === taskName);
     console.log("Remove", removedTask);
 
-    this.task = this.tasks.filter((task) => task.name !== taskName);
+    this.tasks = this.tasks.filter((task) => task.name !== taskName);
   }
 }
