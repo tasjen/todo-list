@@ -1,7 +1,25 @@
 import Project from "./project.js";
 import Task from "./task.js";
+import { isSameDay, isSameWeek } from "date-fns";
 
 export default class DOMstuff {
+  static loadTodayTasks(projectList) {
+    clearMainSection();
+    changeTabNameTo("Today");
+    const task_list = document.createElement("ul");
+    task_list.id = "task-list";
+    for (let projectObject of projectList) {
+      for (let taskObject of projectObject.tasks) {
+        if (isSameDay(taskObject.dueDate, new Date())) {
+          const today_task = createTaskDOM(taskObject, projectObject);
+          today_task.querySelector(".task-name").textContent += ` (${projectObject.name})`;
+          task_list.appendChild(today_task);
+        }
+      }
+    }
+    const main_section = document.querySelector("#main-section");
+    main_section.appendChild(task_list);
+  }
 
   static loadProjectList(projectList) {
     //render project list
@@ -116,7 +134,7 @@ function createProjectDOM(projectObject) {
   project.addEventListener("click", () => {
     if (!project.classList.contains("onpage")) {
       DOMstuff.loadTaskList(projectObject);
-      const previous_page = document.querySelector(".project.onpage");
+      const previous_page = document.querySelector(".onpage");
       if (previous_page) previous_page.classList.remove("onpage");
       project.classList.add("onpage");
     }

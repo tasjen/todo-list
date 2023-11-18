@@ -30,3 +30,13 @@ projectList.push(project3);
 
 DOMstuff.loadProjectList(projectList);
 document.querySelector('.project:first-child').click();
+
+const today_task = document.querySelector("#today-task");
+today_task.addEventListener("click", () => {
+  DOMstuff.loadTodayTasks(projectList);
+  if (!today_task.classList.contains('onpage')) {
+    const previous_page = document.querySelector(".project.onpage");
+    if (previous_page) previous_page.classList.remove("onpage");
+    today_task.classList.add("onpage");
+  }
+})

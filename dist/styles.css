@@ -54,11 +54,13 @@ nav li {
   padding-left: 0.5rem;
 }
 
+.menu:hover,
 .project:hover {
   border-left: 4px solid black;
   cursor: pointer;
 }
 
+.menu.onpage,
 .project.onpage {
   cursor: default;
   border-left: 4px solid black;
