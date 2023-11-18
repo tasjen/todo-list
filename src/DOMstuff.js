@@ -58,13 +58,13 @@ function createTaskDOM(taskObject, projectObject) {
   priority.classList.add("priority");
   switch (taskObject.priority) {
     case 1:
-      priority.textContent = "low";
+      priority.textContent = "★";
       break;
     case 2:
-      priority.textContent = "medium";
+      priority.textContent = "★ ★";
       break;
     case 3:
-      priority.textContent = "high";
+      priority.textContent = "★ ★ ★";
       break;
   }
 
