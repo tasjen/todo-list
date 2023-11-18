@@ -124,68 +124,6 @@ function createProjectDOM(projectObject) {
   return project;
 }
 
-function createProjectAdder(projectList) {
-  const project_adder = document.createElement("div");
-  project_adder.id = "project-adder";
-
-  const add_project_button = document.createElement("button");
-  add_project_button.id = "add-project";
-  add_project_button.textContent = "+ Add project";
-  add_project_button.addEventListener("click", () => {
-    add_project_button.classList.add("hide");
-    add_project_form.classList.remove("hide");
-    name_input.focus();
-  });
-
-  const add_project_form = document.createElement("form");
-  add_project_form.id = "project-form";
-  add_project_form.classList.add("hide");
-
-  const name_input = document.createElement("input");
-  name_input.type = "text";
-  name_input.id = "name";
-  name_input.placeholder = "Task name";
-  name_input.required = true;
-  const confirm_button = document.createElement("button");
-  confirm_button.type = "submit";
-  confirm_button.id = "confirm-project";
-  confirm_button.textContent = "Add";
-  const cancel_button = document.createElement("button");
-  cancel_button.type = "button";
-  cancel_button.id = "cancel-project";
-  cancel_button.textContent = "Cancel";
-
-  add_project_form.addEventListener("submit", (event) => {
-    event.preventDefault();
-    //check unique project name
-    if (projectList.some((project) => project.name === name_input.value)) {
-      alert("Project name must be unique");
-      return;
-    }
-
-    const newProjectObject = new Project(name_input.value);
-
-    projectList.push(newProjectObject);
-    const newProjectDOM = createProjectDOM(newProjectObject);
-    document.querySelector("#project-list").appendChild(newProjectDOM);
-
-    resetProjectAdder(projectList);
-  });
-
-  cancel_button.addEventListener("click", () => {
-    resetProjectAdder(projectList);
-  });
-
-  add_project_form.appendChild(name_input);
-  add_project_form.appendChild(confirm_button);
-  add_project_form.appendChild(cancel_button);
-
-  project_adder.appendChild(add_project_button);
-  project_adder.appendChild(add_project_form);
-
-  return project_adder;
-}
-
 function createTaskAdder(projectObject) {
   const task_adder = document.createElement("div");
   task_adder.id = "task-adder";
@@ -303,6 +241,68 @@ function createTaskAdder(projectObject) {
   task_adder.appendChild(add_task_form);
 
   return task_adder;
+}
+
+function createProjectAdder(projectList) {
+  const project_adder = document.createElement("div");
+  project_adder.id = "project-adder";
+
+  const add_project_button = document.createElement("button");
+  add_project_button.id = "add-project";
+  add_project_button.textContent = "+ Add project";
+  add_project_button.addEventListener("click", () => {
+    add_project_button.classList.add("hide");
+    add_project_form.classList.remove("hide");
+    name_input.focus();
+  });
+
+  const add_project_form = document.createElement("form");
+  add_project_form.id = "project-form";
+  add_project_form.classList.add("hide");
+
+  const name_input = document.createElement("input");
+  name_input.type = "text";
+  name_input.id = "name";
+  name_input.placeholder = "Task name";
+  name_input.required = true;
+  const confirm_button = document.createElement("button");
+  confirm_button.type = "submit";
+  confirm_button.id = "confirm-project";
+  confirm_button.textContent = "Add";
+  const cancel_button = document.createElement("button");
+  cancel_button.type = "button";
+  cancel_button.id = "cancel-project";
+  cancel_button.textContent = "Cancel";
+
+  add_project_form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    //check unique project name
+    if (projectList.some((project) => project.name === name_input.value)) {
+      alert("Project name must be unique");
+      return;
+    }
+
+    const newProjectObject = new Project(name_input.value);
+
+    projectList.push(newProjectObject);
+    const newProjectDOM = createProjectDOM(newProjectObject);
+    document.querySelector("#project-list").appendChild(newProjectDOM);
+
+    resetProjectAdder(projectList);
+  });
+
+  cancel_button.addEventListener("click", () => {
+    resetProjectAdder(projectList);
+  });
+
+  add_project_form.appendChild(name_input);
+  add_project_form.appendChild(confirm_button);
+  add_project_form.appendChild(cancel_button);
+
+  project_adder.appendChild(add_project_button);
+  project_adder.appendChild(add_project_form);
+
+  return project_adder;
 }
 
 function resetTaskAdder(projectObject) {
