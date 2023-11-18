@@ -10,6 +10,7 @@ export default class Project {
 
   addTask(taskObject) { 
     this.tasks.push(taskObject);
+    console.log("Add", taskObject);
   }
 
   removeTask(taskName) {
