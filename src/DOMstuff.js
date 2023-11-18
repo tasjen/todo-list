@@ -12,7 +12,9 @@ export default class DOMstuff {
       for (let taskObject of projectObject.tasks) {
         if (isSameDay(taskObject.dueDate, new Date())) {
           const today_task = createTaskDOM(taskObject, projectObject);
-          today_task.querySelector(".task-name").textContent += ` (${projectObject.name})`;
+          today_task.querySelector(
+            ".task-name"
+          ).textContent += ` (${projectObject.name})`;
           task_list.appendChild(today_task);
         }
       }
@@ -78,17 +80,7 @@ function createTaskDOM(taskObject, projectObject) {
 
   const priority = document.createElement("p");
   priority.classList.add("priority");
-  switch (taskObject.priority) {
-    case 1:
-      priority.textContent = "★";
-      break;
-    case 2:
-      priority.textContent = "★ ★";
-      break;
-    case 3:
-      priority.textContent = "★ ★ ★";
-      break;
-  }
+  priority.textContent = ["★", "★ ★", "★ ★ ★"][taskObject.priority - 1];
 
   const description = document.createElement("button");
   description.classList.add("description");
