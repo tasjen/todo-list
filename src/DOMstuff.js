@@ -2,35 +2,45 @@ import Project from "./project.js";
 import Task from "./task.js";
 
 export default class DOMstuff {
+
   static loadProjectList(projectList) {
+    //render project list
     const project_list = document.querySelector("#project-list");
     for (let projectObject of projectList) {
       const project = createProjectDOM(projectObject);
       project_list.appendChild(project);
     }
+
+    //render project adder
     project_list.insertAdjacentElement(
       "afterend",
       createProjectAdder(projectList)
     );
   }
+
   static loadTaskList(projectObject) {
     clearMainSection();
     changeTabNameTo(projectObject.name);
+
+    //render project's tasks
     const task_list = document.createElement("ul");
     task_list.id = "task-list";
     for (let taskObject of projectObject.tasks) {
       const task = createTaskDOM(taskObject, projectObject);
       task_list.appendChild(task);
     }
-
     const main_section = document.querySelector("#main-section");
     main_section.appendChild(task_list);
+
+    //render task adder
     main_section.appendChild(createTaskAdder(projectObject));
   }
 }
 
 function clearMainSection() {
   const main_section = document.querySelector("#main-section");
+
+  //remove every element from main section except page header (tab name)
   while (main_section.childElementCount > 1) {
     main_section.removeChild(main_section.lastChild);
   }
@@ -47,12 +57,6 @@ function createTaskDOM(taskObject, projectObject) {
   const task_name = document.createElement("p");
   task_name.classList.add("task-name");
   task_name.textContent = taskObject.name;
-
-  const project_name = document.createElement("p");
-  project_name.classList.add("project-name");
-  if (projectObject.name === "none") {
-    project_name.textContent = "";
-  } else project_name.textContent = projectObject.name;
 
   const priority = document.createElement("p");
   priority.classList.add("priority");
@@ -95,7 +99,6 @@ function createTaskDOM(taskObject, projectObject) {
   });
 
   task.appendChild(task_name);
-  task.appendChild(project_name);
   task.appendChild(priority);
   task.appendChild(description);
   task.appendChild(due_date);
@@ -113,8 +116,8 @@ function createProjectDOM(projectObject) {
   project.addEventListener("click", () => {
     if (!project.classList.contains("onpage")) {
       DOMstuff.loadTaskList(projectObject);
-      const last_page = document.querySelector(".project.onpage");
-      if (last_page) last_page.classList.remove("onpage");
+      const previous_page = document.querySelector(".project.onpage");
+      if (previous_page) previous_page.classList.remove("onpage");
       project.classList.add("onpage");
     }
   });
@@ -260,12 +263,14 @@ function createTaskAdder(projectObject) {
   cancel_button.textContent = "Cancel";
 
   add_task_form.addEventListener("submit", (event) => {
+    //check unique task name in a project
     event.preventDefault();
     if (projectObject.tasks.some((task) => task.name === name_input.value)) {
       alert("Task name must be unique");
       return;
     }
 
+    //add new task to the project object
     const newTaskObject = new Task(
       name_input.value,
       description_input.value,
@@ -276,6 +281,7 @@ function createTaskAdder(projectObject) {
     );
     projectObject.addTask(newTaskObject);
 
+    //add new task to the DOM
     const newTaskDOM = createTaskDOM(newTaskObject, projectObject);
     document.querySelector("#task-list").appendChild(newTaskDOM);
 
@@ -300,17 +306,21 @@ function createTaskAdder(projectObject) {
 }
 
 function resetTaskAdder(projectObject) {
+  //remove task adder from the DOM
   const task_adder = document.querySelector("#task-adder");
   task_adder.parentElement.removeChild(task_adder);
 
+  //create and add task adder to the DOM
   const main_section = document.querySelector("#main-section");
   main_section.appendChild(createTaskAdder(projectObject));
 }
 
 function resetProjectAdder(projectList) {
+  //remove project adder from the DOM
   const project_adder = document.querySelector("#project-adder");
   project_adder.parentElement.removeChild(project_adder);
 
+  //create and add project adder to the DOM
   const project_list = document.querySelector("#project-list");
   project_list.insertAdjacentElement(
     "afterend",
