@@ -4,7 +4,9 @@
   font-family: sans-serif;
 }
 
-.hide {
+#task-form.hide,
+#project-form.hide,
+button.hide {
   display: none;
 }
 
@@ -96,6 +98,7 @@ nav li {
 #task-adder {
   display: flex;
   flex-direction: column;
+  align-items: center;
 }
 
 .task-detail {
@@ -137,20 +140,71 @@ nav li {
   margin-left: 8px;
 }
 
-form {
-  display:flex;
+#task-form > div {
+  display: flex;
   flex-direction: column;
-  margin-top: 1rem;
+  align-items: stretch;
 }
 
-form > input,
-form > textarea {
+#task-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 2fr 1fr 1fr;
+  gap: 0.5rem;
+  grid-template-areas:
+    "task-name task-name"
+    "task-description task-description"
+    "task-due-date task-priority"
+    "form-submit form-cancel";
+  margin-top: 1rem;
+  max-width: 800px;
+}
+
+#task-form > #name-input-container {
+  grid-area: task-name;
+}
+
+#task-form > #description-input-container {
+  grid-area: task-description;
+}
+
+#task-form > #date-input-container {
+  grid-area: task-due-date;
+}
+
+#task-form > #priority-input-container {
+  grid-area: task-priority;
+}
+
+#task-form > #confirm-task {
+  grid-area: form-submit;
+}
+
+#task-form > #cancel-task {
+  grid-area: form-cancel;
+}
+
+#priority-input-container > div label {
+  margin-left: 4px;
+  margin-right: 8px;
+}
+
+form input,
+form textarea {
   font-size: 20px;
   padding: 4px;
 }
 
+textarea {
+  height: 100px;
+  min-height: 50px;
+  max-height: 100px;
+  min-width: 520px;
+  max-width: 100%;
+}
+
 footer {
   grid-area: footer;
-  text-align:center;
+  text-align: center;
   padding-top: 1rem;
 }
