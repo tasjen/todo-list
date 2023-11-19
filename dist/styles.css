@@ -63,6 +63,10 @@ nav li {
   cursor: pointer;
 }
 
+.button {
+  cursor: pointer;
+}
+
 .menu.on-page,
 .project.on-page {
   cursor: default;
@@ -72,8 +76,8 @@ nav li {
 #add-project,
 #add-task {
   text-align: start;
-  padding: 2px 4px;
-  font-size: 18px;
+  padding: 4px 8px;
+  font-size: 20px;
   margin-top: 8px;
 }
 
@@ -121,7 +125,7 @@ nav li {
   overflow: hidden;
 }
 
-.description-button {
+.description {
   text-decoration: underline;
   text-decoration-thickness: 2px;
   text-decoration-color: #111;
@@ -137,7 +141,11 @@ nav li {
 }
 
 .task-name ~ * {
-  margin-left: 8px;
+  margin-left: 1rem;
+}
+
+.edit {
+  margin-right: 1rem;
 }
 
 #task-form > div {

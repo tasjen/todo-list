@@ -124,7 +124,7 @@ function createTaskDOM(taskObject, projectObject) {
   priority.textContent = ["★", "★ ★", "★ ★ ★"][taskObject.priority - 1];
 
   const description_button = document.createElement("p");
-  description_button.classList.add("description-button");
+  description_button.classList.add("description", "button");
   description_button.textContent = "description";
   description_button.addEventListener("click", () => {
     if (task.isShowingDescription) {
@@ -149,9 +149,9 @@ function createTaskDOM(taskObject, projectObject) {
     year: "numeric",
   });
 
-  const edit = document.createElement("button");
-  edit.classList.add("edit");
-  edit.textContent = "Edit";
+  const edit = document.createElement("p");
+  edit.classList.add("edit", "button");
+  edit.textContent = "📝";
   edit.addEventListener("click", () => {
     document.querySelector("#add-task").click();
 
@@ -171,9 +171,9 @@ function createTaskDOM(taskObject, projectObject) {
     document.querySelector("#task-form").editingTask = taskObject;
   });
 
-  const remove = document.createElement("button");
-  remove.classList.add("remove");
-  remove.textContent = "remove";
+  const remove = document.createElement("p");
+  remove.classList.add("remove", "button");
+  remove.textContent = "❌";
   remove.addEventListener("click", () => {
     task.parentElement.removeChild(task);
     projectObject.removeTask(taskObject.name);
