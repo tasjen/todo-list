@@ -3,10 +3,45 @@ import Task from "./task.js";
 import projectList from "./storage.js";
 import { isSameDay, isSameWeek, format } from "date-fns";
 
+const all_task = document.querySelector("#all-task");
+all_task.render = () => DOMstuff.loadAllTasks();
+all_task.addEventListener("click", () => {
+  changeTabTo(all_task);
+});
+
+const today_task = document.querySelector("#today-task");
+today_task.render = () => DOMstuff.loadTodayTasks();
+today_task.addEventListener("click", () => {
+  changeTabTo(today_task);
+});
+
+const this_week_task = document.querySelector("#this-week-task");
+this_week_task.render = () => DOMstuff.loadThisWeekTasks();
+this_week_task.addEventListener("click", () => {
+  changeTabTo(this_week_task);
+});
+
 export default class DOMstuff {
+
+  static loadAllTasks() {
+    const task_list = document.querySelector("#task-list");
+    for (let projectObject of projectList) {
+      for (let taskObject of projectObject.tasks) {
+        const today_task = createTaskDOM(taskObject, projectObject);
+        const task_detail = today_task.firstChild;
+        task_detail.removeChild(task_detail.querySelector(".remove"));
+        task_detail.removeChild(task_detail.querySelector(".edit"));
+        today_task.querySelector(
+          ".task-name"
+        ).textContent += ` (${projectObject.name})`;
+        task_list.appendChild(today_task);
+      }
+    }
+    const main_section = document.querySelector("#main-section");
+    main_section.appendChild(task_list);
+  }
   static loadTodayTasks() {
-    const task_list = document.createElement("ul");
-    task_list.id = "task-list";
+    const task_list = document.querySelector("#task-list");
     for (let projectObject of projectList) {
       for (let taskObject of projectObject.tasks) {
         if (isSameDay(taskObject.dueDate, new Date())) {
@@ -26,8 +61,7 @@ export default class DOMstuff {
   }
 
   static loadThisWeekTasks() {
-    const task_list = document.createElement("ul");
-    task_list.id = "task-list";
+    const task_list = document.querySelector("#task-list");
     for (let projectObject of projectList) {
       for (let taskObject of projectObject.tasks) {
         if (isSameWeek(taskObject.dueDate, new Date())) {
@@ -48,8 +82,7 @@ export default class DOMstuff {
 
   static loadTaskList(projectObject) {
     //render project's tasks
-    const task_list = document.createElement("ul");
-    task_list.id = "task-list";
+    const task_list = document.querySelector("#task-list");
     for (let taskObject of projectObject.tasks) {
       const task = createTaskDOM(taskObject, projectObject);
       task_list.appendChild(task);
@@ -164,9 +197,9 @@ function createProjectDOM(projectObject) {
   const project = document.createElement("li");
   project.classList.add("project");
   project.textContent = projectObject.name;
-
+  project.render = () => DOMstuff.loadTaskList(projectObject);
   project.addEventListener("click", () => {
-    changeTabTo(project, DOMstuff.loadTaskList, projectObject);
+    changeTabTo(project);
   });
   return project;
 }
@@ -385,6 +418,7 @@ function createProjectAdder() {
     //check unique project name
     if (projectList.some((project) => project.name === name_input.value)) {
       alert("Project name must be unique");
+      name_input.select();
       return;
     }
 
@@ -434,29 +468,31 @@ function resetProjectAdder() {
   project_list.insertAdjacentElement("afterend", createProjectAdder());
 }
 
-function changeTabTo(navItem, loadTabFunction, projectObject = undefined) {
-  if (!navItem.classList.contains("on-page")) {
+function changeTabTo(pageNode) {
+  if (!pageNode.classList.contains("on-page")) {
     clearMainSection();
-    changeTabNameTo(navItem.textContent);
-    loadTabFunction(projectObject);
+    document.querySelector("#tab-name").textContent = pageNode.textContent;
+    pageNode.render();
     checkEmptyTaskMessage();
     const previous_page = document.querySelector(".on-page");
     if (previous_page) previous_page.classList.remove("on-page");
-    navItem.classList.add("on-page");
+    pageNode.classList.add("on-page");
   }
 }
 
 function clearMainSection() {
   const main_section = document.querySelector("#main-section");
+  const task_list = document.querySelector("#task-list");
 
   //remove every element from main section except page header (tab name)
-  while (main_section.childElementCount > 1) {
-    main_section.removeChild(main_section.lastChild);
+  while (task_list.firstChild) {
+    task_list.removeChild(task_list.firstChild);
   }
-}
 
-function changeTabNameTo(tabName) {
-  document.querySelector("#tab-name").textContent = tabName;
+  //remove task-adder (if exist)
+  if (document.querySelector("#task-adder")) {
+    main_section.removeChild(document.querySelector("#task-adder"));
+  }
 }
 
 function checkEmptyTaskMessage() {
@@ -470,5 +506,3 @@ function checkEmptyTaskMessage() {
     task_list.removeChild(task_list.firstElementChild);
   }
 }
-
-export { changeTabTo };
