@@ -40,18 +40,6 @@ export default class DOMstuff {
     main_section.appendChild(task_list);
   }
 
-  static loadProjectList() {
-    //render project list on nav bar
-    const project_list = document.querySelector("#project-list");
-    for (let projectObject of projectList) {
-      const project = createProjectDOM(projectObject);
-      project_list.appendChild(project);
-    }
-
-    //render project adder
-    project_list.insertAdjacentElement("afterend", createProjectAdder());
-  }
-
   static loadTaskList(projectObject) {
     //render project's tasks
     const task_list = document.createElement("ul");
@@ -66,19 +54,18 @@ export default class DOMstuff {
     //render task adder
     main_section.appendChild(createTaskAdder(projectObject));
   }
-}
 
-function clearMainSection() {
-  const main_section = document.querySelector("#main-section");
+  static loadProjectList() {
+    //render project list on nav bar
+    const project_list = document.querySelector("#project-list");
+    for (let projectObject of projectList) {
+      const project = createProjectDOM(projectObject);
+      project_list.appendChild(project);
+    }
 
-  //remove every element from main section except page header (tab name)
-  while (main_section.childElementCount > 1) {
-    main_section.removeChild(main_section.lastChild);
+    //render project adder
+    project_list.insertAdjacentElement("afterend", createProjectAdder());
   }
-}
-
-function changeTabNameTo(tabName) {
-  document.querySelector("#tab-name").textContent = tabName;
 }
 
 function createTaskDOM(taskObject, projectObject) {
@@ -344,15 +331,28 @@ function resetProjectAdder() {
 }
 
 function changeTabTo(navItem, loadTabFunction, projectObject = undefined) {
-  clearMainSection();
-  changeTabNameTo(navItem.textContent);
   if (!navItem.classList.contains("on-page")) {
+    clearMainSection();
+    changeTabNameTo(navItem.textContent);
     loadTabFunction(projectObject);
     checkEmptyTaskMessage();
     const previous_page = document.querySelector(".on-page");
     if (previous_page) previous_page.classList.remove("on-page");
     navItem.classList.add("on-page");
   }
+}
+
+function clearMainSection() {
+  const main_section = document.querySelector("#main-section");
+
+  //remove every element from main section except page header (tab name)
+  while (main_section.childElementCount > 1) {
+    main_section.removeChild(main_section.lastChild);
+  }
+}
+
+function changeTabNameTo(tabName) {
+  document.querySelector("#tab-name").textContent = tabName;
 }
 
 function checkEmptyTaskMessage() {
