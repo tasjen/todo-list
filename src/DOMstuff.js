@@ -71,6 +71,7 @@ export default class DOMstuff {
 function createTaskDOM(taskObject, projectObject) {
   const task = document.createElement("li");
   task.classList.add("task");
+  task.isShowingDescription = false;
 
   const task_name = document.createElement("p");
   task_name.classList.add("task-name");
@@ -83,7 +84,20 @@ function createTaskDOM(taskObject, projectObject) {
   const description = document.createElement("button");
   description.classList.add("description");
   description.textContent = "description";
-  //Add description event listener
+  description.addEventListener("click", (event) => {
+    if (task.isShowingDescription) {
+      document
+        .querySelector("#task-list")
+        .removeChild(event.target.parentElement.nextSibling);
+      task.isShowingDescription = false;
+    } else {
+      const pop_up = document.createElement("p");
+      pop_up.classList.add("pop-up");
+      pop_up.textContent = taskObject.description;
+      task.insertAdjacentElement("afterend", pop_up);
+      task.isShowingDescription = true;
+    }
+  });
 
   const due_date = document.createElement("p");
   due_date.classList.add("due-date");
@@ -359,7 +373,6 @@ function checkEmptyTaskMessage() {
   const task_list = document.querySelector("#task-list");
   const tasks = document.querySelectorAll(".task");
   const no_task = document.createElement("p");
-  no_task.classList.add("task");
   no_task.textContent = "No tasks here.";
   if (!tasks.length) {
     task_list.appendChild(no_task);
