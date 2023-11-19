@@ -85,13 +85,19 @@ nav li {
   font-size: 36px;
 }
 
-.task {
+#task-list > * {
   display: flex;
   margin-left: 3rem;
   padding-bottom: 8px;
   margin-top: 8px;
   margin-right: 1rem;
   border-bottom: 1px solid #ccc
+}
+
+#task-list .pop-up {
+  margin-left: 4rem;
+  border-bottom: none;
+  font-size: 20px;
 }
 
 .task .task-name {
