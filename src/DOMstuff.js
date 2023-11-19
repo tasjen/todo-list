@@ -5,8 +5,6 @@ import { isSameDay, isSameWeek } from "date-fns";
 
 export default class DOMstuff {
   static loadTodayTasks() {
-    clearMainSection();
-    changeTabNameTo("Today");
     const task_list = document.createElement("ul");
     task_list.id = "task-list";
     for (let projectObject of projectList) {
@@ -25,8 +23,6 @@ export default class DOMstuff {
   }
 
   static loadThisWeekTasks() {
-    clearMainSection();
-    changeTabNameTo("This week");
     const task_list = document.createElement("ul");
     task_list.id = "task-list";
     for (let projectObject of projectList) {
@@ -45,7 +41,7 @@ export default class DOMstuff {
   }
 
   static loadProjectList() {
-    //render project list
+    //render project list on nav bar
     const project_list = document.querySelector("#project-list");
     for (let projectObject of projectList) {
       const project = createProjectDOM(projectObject);
@@ -57,9 +53,6 @@ export default class DOMstuff {
   }
 
   static loadTaskList(projectObject) {
-    clearMainSection();
-    changeTabNameTo(projectObject.name);
-
     //render project's tasks
     const task_list = document.createElement("ul");
     task_list.id = "task-list";
@@ -351,6 +344,8 @@ function resetProjectAdder() {
 }
 
 function changeTabTo(navItem, loadTabFunction, projectObject = undefined) {
+  clearMainSection();
+  changeTabNameTo(navItem.textContent);
   if (!navItem.classList.contains("on-page")) {
     loadTabFunction(projectObject);
     checkEmptyTaskMessage();
