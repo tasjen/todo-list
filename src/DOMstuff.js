@@ -120,7 +120,6 @@ function createTaskDOM(taskObject, projectObject) {
   edit.classList.add("edit");
   edit.textContent = "Edit";
   edit.addEventListener("click", () => {
-
     document.querySelector("#add-task").click();
 
     //add original value to all inputs
@@ -292,6 +291,7 @@ function createTaskAdder(projectObject) {
       //check unique task name in a project
       if (projectObject.tasks.some((task) => task.name === name_input.value)) {
         alert("Task name must be unique");
+        name_input.select();
         return;
       }
 
@@ -310,6 +310,15 @@ function createTaskAdder(projectObject) {
 
       checkEmptyTaskMessage();
     } else if (form.type === "edit") {
+      //check if the new name is not the same as the old name
+      //but the same as other task's name (check unique name)
+      if (name_input.value !== form.editingTask.name
+        && projectObject.tasks.some((task) => task.name === name_input.value)) {
+          alert("Task name must be unique");
+          name_input.select();
+          return;
+        }
+
       //set all new property of the taskObject that is being edited
       form.editingTask.setName(name_input.value);
       form.editingTask.setDescription(description_input.value);
