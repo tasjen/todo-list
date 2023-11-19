@@ -105,6 +105,29 @@ nav li {
   align-items: center;
 }
 
+#project-form{
+  margin-top: 1rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  grid-template-areas:
+  "input input"
+  "submit cancel";
+  gap: 10px;
+}
+
+#project-name-input {
+  grid-area: input;
+}
+
+#confirm-project {
+  grid-area: submit;
+}
+
+#cancel-project {
+  grid-area: cancel;
+}
+
 .task-detail {
   display: flex;
   margin-top: 8px;
@@ -132,7 +155,7 @@ nav li {
   cursor: pointer;
 }
 
-.description-button.showing {
+.description.showing {
   text-decoration: none;
 }
 

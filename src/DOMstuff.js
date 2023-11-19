@@ -401,7 +401,7 @@ function createProjectAdder() {
 
   const name_input = document.createElement("input");
   name_input.type = "text";
-  name_input.id = "name";
+  name_input.id = "project-name-input";
   name_input.placeholder = "Task name";
   name_input.required = true;
   const confirm_button = document.createElement("button");
@@ -428,7 +428,8 @@ function createProjectAdder() {
     const newProjectDOM = createProjectDOM(newProjectObject);
     document.querySelector("#project-list").appendChild(newProjectDOM);
 
-    resetProjectAdder();
+
+    changeTabTo(newProjectDOM);
   });
 
   cancel_button.addEventListener("click", () => {
@@ -471,6 +472,7 @@ function resetProjectAdder() {
 function changeTabTo(pageNode) {
   if (!pageNode.classList.contains("on-page")) {
     clearMainSection();
+    resetProjectAdder();
     document.querySelector("#tab-name").textContent = pageNode.textContent;
     pageNode.render();
     checkEmptyTaskMessage();
