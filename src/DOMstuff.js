@@ -143,12 +143,7 @@ function createProjectDOM(projectObject) {
   project.textContent = projectObject.name;
 
   project.addEventListener("click", () => {
-    if (!project.classList.contains("onpage")) {
-      DOMstuff.loadTaskList(projectObject);
-      const previous_page = document.querySelector(".onpage");
-      if (previous_page) previous_page.classList.remove("onpage");
-      project.classList.add("onpage");
-    }
+    changeTabTo(project, DOMstuff.loadTaskList, projectObject);
   });
   return project;
 }
@@ -252,7 +247,7 @@ function createTaskAdder(projectObject) {
     const newTaskDOM = createTaskDOM(newTaskObject, projectObject);
     document.querySelector("#task-list").appendChild(newTaskDOM);
 
-    checkEmptyTaskMessage()
+    checkEmptyTaskMessage();
     resetTaskAdder(projectObject);
   });
 
@@ -314,10 +309,10 @@ function createProjectAdder() {
 
     const newProjectObject = new Project(name_input.value);
     projectList.push(newProjectObject);
-    
+
     const newProjectDOM = createProjectDOM(newProjectObject);
     document.querySelector("#project-list").appendChild(newProjectDOM);
-    
+
     resetProjectAdder();
   });
 
@@ -355,12 +350,13 @@ function resetProjectAdder() {
   project_list.insertAdjacentElement("afterend", createProjectAdder());
 }
 
-function changeTabTo(navItem, loadTabFunction) {
-  if (!navItem.classList.contains("onpage")) {
-    loadTabFunction();
-    const previous_page = document.querySelector(".onpage");
-    if (previous_page) previous_page.classList.remove("onpage");
-    navItem.classList.add("onpage");
+function changeTabTo(navItem, loadTabFunction, projectObject = undefined) {
+  if (!navItem.classList.contains("on-page")) {
+    loadTabFunction(projectObject);
+    checkEmptyTaskMessage();
+    const previous_page = document.querySelector(".on-page");
+    if (previous_page) previous_page.classList.remove("on-page");
+    navItem.classList.add("on-page");
   }
 }
 
@@ -372,8 +368,7 @@ function checkEmptyTaskMessage() {
   no_task.textContent = "No tasks here.";
   if (!tasks.length) {
     task_list.appendChild(no_task);
-  }
-  else if (task_list.firstElementChild.textContent === "No tasks here.") {
+  } else if (task_list.firstElementChild.textContent === "No tasks here.") {
     task_list.removeChild(task_list.firstElementChild);
   }
 }
