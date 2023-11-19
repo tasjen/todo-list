@@ -1,7 +1,7 @@
 import Project from "./project.js";
 import Task from "./task.js";
 import projectList from "./storage.js";
-import { isSameDay, isSameWeek } from "date-fns";
+import { isSameDay, isSameWeek, format } from "date-fns";
 
 export default class DOMstuff {
   static loadTodayTasks() {
@@ -11,6 +11,9 @@ export default class DOMstuff {
       for (let taskObject of projectObject.tasks) {
         if (isSameDay(taskObject.dueDate, new Date())) {
           const today_task = createTaskDOM(taskObject, projectObject);
+          const task_detail = today_task.firstChild;
+          task_detail.removeChild(task_detail.querySelector(".remove"));
+          task_detail.removeChild(task_detail.querySelector(".edit"));
           today_task.querySelector(
             ".task-name"
           ).textContent += ` (${projectObject.name})`;
@@ -29,6 +32,9 @@ export default class DOMstuff {
       for (let taskObject of projectObject.tasks) {
         if (isSameWeek(taskObject.dueDate, new Date())) {
           const this_week_task = createTaskDOM(taskObject, projectObject);
+          const task_detail = this_week_task.firstChild;
+          task_detail.removeChild(task_detail.querySelector(".remove"));
+          task_detail.removeChild(task_detail.querySelector(".edit"));
           this_week_task.querySelector(
             ".task-name"
           ).textContent += ` (${projectObject.name})`;
@@ -89,7 +95,7 @@ function createTaskDOM(taskObject, projectObject) {
   description_button.textContent = "description";
   description_button.addEventListener("click", () => {
     if (task.isShowingDescription) {
-        task.removeChild(task.lastChild);
+      task.removeChild(task.lastChild);
       task.isShowingDescription = false;
       description_button.classList.remove("showing");
     } else {
@@ -113,7 +119,25 @@ function createTaskDOM(taskObject, projectObject) {
   const edit = document.createElement("button");
   edit.classList.add("edit");
   edit.textContent = "Edit";
-  //Add edit event listener
+  edit.addEventListener("click", () => {
+
+    document.querySelector("#add-task").click();
+
+    //add original value to all inputs
+    document.querySelector("#confirm-task").textContent = "Submit";
+    document.querySelector("#name-input").value = taskObject.name;
+    document.querySelector("#description-input").value = taskObject.description;
+    document.querySelector("#date-input").value = format(
+      taskObject.dueDate,
+      "yyyy-MM-dd"
+    );
+    document.querySelector(
+      `input[type="radio"][value="${taskObject.priority}"]`
+    ).checked = true;
+
+    document.querySelector("#task-form").type = "edit";
+    document.querySelector("#task-form").editingTask = taskObject;
+  });
 
   const remove = document.createElement("button");
   remove.classList.add("remove");
@@ -121,6 +145,7 @@ function createTaskDOM(taskObject, projectObject) {
   remove.addEventListener("click", () => {
     task.parentElement.removeChild(task);
     projectObject.removeTask(taskObject.name);
+    resetTaskAdder();
     checkEmptyTaskMessage();
   });
 
@@ -156,51 +181,51 @@ function createTaskAdder(projectObject) {
   add_task_button.textContent = "+ Add task";
   add_task_button.addEventListener("click", () => {
     add_task_button.classList.add("hide");
-    add_task_form.classList.remove("hide");
+    form.classList.remove("hide");
     name_input.focus();
   });
 
-  const add_task_form = document.createElement("form");
-  add_task_form.id = "task-form";
-  add_task_form.classList.add("hide");
+  const form = document.createElement("form");
+  form.type = "add";
+  form.id = "task-form";
+  form.classList.add("hide");
 
   const name_input_container = document.createElement("div");
-  name_input_container.id = "name-input-container"
+  name_input_container.id = "name-input-container";
   const description_input_container = document.createElement("div");
-  description_input_container.id = "description-input-container"
+  description_input_container.id = "description-input-container";
   const date_input_container = document.createElement("div");
   date_input_container.id = "date-input-container";
 
-  const name_input_label = document.createElement('label');
-  name_input_label.htmlFor = "name";
+  const name_input_label = document.createElement("label");
+  name_input_label.htmlFor = "name-input";
   name_input_label.textContent = "Task name";
-  const description_input_label = document.createElement('label');
-  description_input_label.htmlFor = "description";
+  const description_input_label = document.createElement("label");
+  description_input_label.htmlFor = "description-input";
   description_input_label.textContent = "Task description";
-  const date_input_label = document.createElement('label');
-  date_input_label.htmlFor = "date";
+  const date_input_label = document.createElement("label");
+  date_input_label.htmlFor = "date-input";
   date_input_label.textContent = "Due date";
-
 
   const name_input = document.createElement("input");
   name_input.type = "text";
-  name_input.id = "name";
+  name_input.id = "name-input";
   name_input.placeholder = "Task name";
   name_input.required = true;
   const description_input = document.createElement("textarea");
-  description_input.id = "description";
+  description_input.id = "description-input";
   description_input.placeholder = "Task description";
   description_input.required = true;
   const date_input = document.createElement("input");
   date_input.type = "date";
-  date_input.id = "date";
+  date_input.id = "date-input";
   date_input.required = true;
 
   name_input_container.appendChild(name_input_label);
   name_input_container.appendChild(name_input);
   description_input_container.appendChild(description_input_label);
   description_input_container.appendChild(description_input);
-  date_input_container.appendChild(date_input_label)
+  date_input_container.appendChild(date_input_label);
   date_input_container.appendChild(date_input);
 
   const low_radio = document.createElement("input");
@@ -232,7 +257,7 @@ function createTaskAdder(projectObject) {
 
   const priority_input_container = document.createElement("div");
   priority_input_container.id = "priority-input-container";
-  const priority_input_label = document.createElement('label');
+  const priority_input_label = document.createElement("label");
   priority_input_label.textContent = "Priority";
   priority_input_container.appendChild(priority_input_label);
 
@@ -255,46 +280,62 @@ function createTaskAdder(projectObject) {
   cancel_button.id = "cancel-task";
   cancel_button.textContent = "Cancel";
 
-  add_task_form.addEventListener("submit", (event) => {
-    //check unique task name in a project
+  form.addEventListener("submit", (event) => {
     event.preventDefault();
-    if (projectObject.tasks.some((task) => task.name === name_input.value)) {
-      alert("Task name must be unique");
-      return;
+
+    //get the checked value(priority) from all radio buttons
+    const priorityValue = +Array.from(
+      document.querySelectorAll("input[name='priority']")
+    ).find((radio) => radio.checked === true).value;
+
+    if (form.type === "add") {
+      //check unique task name in a project
+      if (projectObject.tasks.some((task) => task.name === name_input.value)) {
+        alert("Task name must be unique");
+        return;
+      }
+
+      //add new task to the project object
+      const newTaskObject = new Task(
+        name_input.value,
+        description_input.value,
+        new Date(date_input.value),
+        priorityValue
+      );
+      projectObject.addTask(newTaskObject);
+
+      //add new task to the DOM
+      const newTaskDOM = createTaskDOM(newTaskObject, projectObject);
+      document.querySelector("#task-list").appendChild(newTaskDOM);
+
+      checkEmptyTaskMessage();
+    } else if (form.type === "edit") {
+      //set all new property of the taskObject that is being edited
+      form.editingTask.setName(name_input.value);
+      form.editingTask.setDescription(description_input.value);
+      form.editingTask.setDueDate(new Date(date_input.value));
+      form.editingTask.setPriority(priorityValue);
+
+      //reload page to update DOM
+      clearMainSection();
+      DOMstuff.loadTaskList(projectObject);
     }
-
-    //add new task to the project object
-    const newTaskObject = new Task(
-      name_input.value,
-      description_input.value,
-      new Date(date_input.value),
-      +Array.from(document.querySelectorAll("input[name='priority']")).find(
-        (radio) => radio.checked === true
-      ).value //get the checked value(priority) from all radio buttons
-    );
-    projectObject.addTask(newTaskObject);
-
-    //add new task to the DOM
-    const newTaskDOM = createTaskDOM(newTaskObject, projectObject);
-    document.querySelector("#task-list").appendChild(newTaskDOM);
-
-    checkEmptyTaskMessage();
-    resetTaskAdder(projectObject);
+    resetTaskAdder();
   });
 
   cancel_button.addEventListener("click", () => {
-    resetTaskAdder(projectObject);
+    resetTaskAdder();
   });
 
-  add_task_form.appendChild(name_input_container);
-  add_task_form.appendChild(description_input_container);
-  add_task_form.appendChild(date_input_container);
-  add_task_form.appendChild(priority_input_container);
-  add_task_form.appendChild(confirm_button);
-  add_task_form.appendChild(cancel_button);
+  form.appendChild(name_input_container);
+  form.appendChild(description_input_container);
+  form.appendChild(date_input_container);
+  form.appendChild(priority_input_container);
+  form.appendChild(confirm_button);
+  form.appendChild(cancel_button);
 
   task_adder.appendChild(add_task_button);
-  task_adder.appendChild(add_task_form);
+  task_adder.appendChild(form);
 
   return task_adder;
 }
@@ -361,14 +402,17 @@ function createProjectAdder() {
   return project_adder;
 }
 
-function resetTaskAdder(projectObject) {
-  //remove task adder from the DOM
-  const task_adder = document.querySelector("#task-adder");
-  task_adder.parentElement.removeChild(task_adder);
+function resetTaskAdder() {
+  const form = document.querySelector("#task-form");
+  const add_task_button = document.querySelector("#add-task");
 
-  //create and add task adder to the DOM
-  const main_section = document.querySelector("#main-section");
-  main_section.appendChild(createTaskAdder(projectObject));
+  //hide and reset task form
+  form.classList.add("hide");
+  form.reset();
+  form.type = "add";
+
+  //show add-task button
+  add_task_button.classList.remove("hide");
 }
 
 function resetProjectAdder() {
