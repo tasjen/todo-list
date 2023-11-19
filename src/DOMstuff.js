@@ -164,12 +164,29 @@ function createTaskAdder(projectObject) {
   add_task_form.id = "task-form";
   add_task_form.classList.add("hide");
 
+  const name_input_container = document.createElement("div");
+  name_input_container.id = "name-input-container"
+  const description_input_container = document.createElement("div");
+  description_input_container.id = "description-input-container"
+  const date_input_container = document.createElement("div");
+  date_input_container.id = "date-input-container";
+
+  const name_input_label = document.createElement('label');
+  name_input_label.htmlFor = "name";
+  name_input_label.textContent = "Task name";
+  const description_input_label = document.createElement('label');
+  description_input_label.htmlFor = "description";
+  description_input_label.textContent = "Task description";
+  const date_input_label = document.createElement('label');
+  date_input_label.htmlFor = "date";
+  date_input_label.textContent = "Due date";
+
+
   const name_input = document.createElement("input");
   name_input.type = "text";
   name_input.id = "name";
   name_input.placeholder = "Task name";
   name_input.required = true;
-  name_input.autofocus = true;
   const description_input = document.createElement("textarea");
   description_input.id = "description";
   description_input.placeholder = "Task description";
@@ -178,6 +195,13 @@ function createTaskAdder(projectObject) {
   date_input.type = "date";
   date_input.id = "date";
   date_input.required = true;
+
+  name_input_container.appendChild(name_input_label);
+  name_input_container.appendChild(name_input);
+  description_input_container.appendChild(description_input_label);
+  description_input_container.appendChild(description_input);
+  date_input_container.appendChild(date_input_label)
+  date_input_container.appendChild(date_input);
 
   const low_radio = document.createElement("input");
   low_radio.type = "radio";
@@ -207,12 +231,20 @@ function createTaskAdder(projectObject) {
   high_radio_label.textContent = "High";
 
   const priority_input_container = document.createElement("div");
-  priority_input_container.appendChild(low_radio);
-  priority_input_container.appendChild(low_radio_label);
-  priority_input_container.appendChild(medium_radio);
-  priority_input_container.appendChild(medium_radio_label);
-  priority_input_container.appendChild(high_radio);
-  priority_input_container.appendChild(high_radio_label);
+  priority_input_container.id = "priority-input-container";
+  const priority_input_label = document.createElement('label');
+  priority_input_label.textContent = "Priority";
+  priority_input_container.appendChild(priority_input_label);
+
+  const stupid_div = document.createElement("div");
+  stupid_div.appendChild(low_radio);
+  stupid_div.appendChild(low_radio_label);
+  stupid_div.appendChild(medium_radio);
+  stupid_div.appendChild(medium_radio_label);
+  stupid_div.appendChild(high_radio);
+  stupid_div.appendChild(high_radio_label);
+
+  priority_input_container.appendChild(stupid_div);
 
   const confirm_button = document.createElement("button");
   confirm_button.type = "submit";
@@ -254,9 +286,9 @@ function createTaskAdder(projectObject) {
     resetTaskAdder(projectObject);
   });
 
-  add_task_form.appendChild(name_input);
-  add_task_form.appendChild(description_input);
-  add_task_form.appendChild(date_input);
+  add_task_form.appendChild(name_input_container);
+  add_task_form.appendChild(description_input_container);
+  add_task_form.appendChild(date_input_container);
   add_task_form.appendChild(priority_input_container);
   add_task_form.appendChild(confirm_button);
   add_task_form.appendChild(cancel_button);
