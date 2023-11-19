@@ -52,6 +52,7 @@ nav {
 
 nav li {
   padding-left: 0.5rem;
+  padding-top: 4px;
 }
 
 .menu:hover,
@@ -85,49 +86,60 @@ nav li {
   font-size: 36px;
 }
 
-#task-list > * {
-  display: flex;
+.task,
+#task-adder {
   margin-left: 3rem;
-  padding-bottom: 8px;
-  margin-top: 8px;
-  margin-right: 1rem;
-  border-bottom: 1px solid #ccc
-}
-
-#task-list .pop-up {
-  margin-left: 4rem;
-  border-bottom: none;
-  font-size: 20px;
-}
-
-.task .task-name {
-  margin-right: auto;
-}
-
-.task .task-name ~ * {
-  margin-left: 8px;
-}
-
-.task p {
-  position: relative;
-  top: 2px;
-}
-
-.task .task-name ~ button {
-  padding-left: 8px;
-  padding-right: 8px;
+  margin-right: 2rem;
 }
 
 #task-adder {
   display: flex;
   flex-direction: column;
-  margin-right: 1rem;
-  margin-left: 3rem;
+}
+
+.task-detail {
+  display: flex;
+  margin-top: 8px;
+  border-bottom: 1px solid #aaa;
+}
+
+.task-description {
+  margin-left: 1rem;
+  margin-top: 0.4rem;
+  border-bottom: none;
+  font-size: 20px;
+
+  /* how to stop it from growing along inline direction */
+  overflow-wrap: break-word;
+  white-space: normal;
+  max-width: 100%;
+  text-wrap: wrap;
+  overflow: hidden;
+}
+
+.description-button {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-decoration-color: #111;
+  cursor: pointer;
+}
+
+.description-button.showing {
+  text-decoration: none;
+}
+
+.task-name {
+  margin-right: auto;
+}
+
+.task-name ~ * {
+  margin-left: 8px;
 }
 
 form {
   display:flex;
   flex-direction: column;
+  margin-top: 1rem;
 }
 
 form > input,

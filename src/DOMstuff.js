@@ -73,6 +73,9 @@ function createTaskDOM(taskObject, projectObject) {
   task.classList.add("task");
   task.isShowingDescription = false;
 
+  const task_detail = document.createElement("div");
+  task_detail.classList.add("task-detail");
+
   const task_name = document.createElement("p");
   task_name.classList.add("task-name");
   task_name.textContent = taskObject.name;
@@ -81,21 +84,21 @@ function createTaskDOM(taskObject, projectObject) {
   priority.classList.add("priority");
   priority.textContent = ["★", "★ ★", "★ ★ ★"][taskObject.priority - 1];
 
-  const description = document.createElement("button");
-  description.classList.add("description");
-  description.textContent = "description";
-  description.addEventListener("click", (event) => {
+  const description_button = document.createElement("p");
+  description_button.classList.add("description-button");
+  description_button.textContent = "description";
+  description_button.addEventListener("click", () => {
     if (task.isShowingDescription) {
-      document
-        .querySelector("#task-list")
-        .removeChild(event.target.parentElement.nextSibling);
+        task.removeChild(task.lastChild);
       task.isShowingDescription = false;
+      description_button.classList.remove("showing");
     } else {
       const pop_up = document.createElement("p");
-      pop_up.classList.add("pop-up");
+      pop_up.classList.add("task-description");
       pop_up.textContent = taskObject.description;
-      task.insertAdjacentElement("afterend", pop_up);
+      task.appendChild(pop_up);
       task.isShowingDescription = true;
+      description_button.classList.add("showing");
     }
   });
 
@@ -121,12 +124,14 @@ function createTaskDOM(taskObject, projectObject) {
     checkEmptyTaskMessage();
   });
 
-  task.appendChild(task_name);
-  task.appendChild(priority);
-  task.appendChild(description);
-  task.appendChild(due_date);
-  task.appendChild(edit);
-  task.appendChild(remove);
+  task_detail.appendChild(task_name);
+  task_detail.appendChild(priority);
+  task_detail.appendChild(description_button);
+  task_detail.appendChild(due_date);
+  task_detail.appendChild(edit);
+  task_detail.appendChild(remove);
+
+  task.appendChild(task_detail);
 
   return task;
 }
