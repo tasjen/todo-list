@@ -87,6 +87,7 @@ nav li {
 }
 
 .task,
+#task-list > p,
 #task-adder {
   margin-left: 3rem;
   margin-right: 2rem;
