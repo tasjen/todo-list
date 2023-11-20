@@ -21,7 +21,7 @@ body {
   height: 100vh;
   display: grid;
   grid-template-columns: 1fr;
-  grid-template-rows: 125px 1fr 75px;
+  grid-template-rows: 125px 1fr 50px;
   grid-template-areas:
     "header"
     "main"
@@ -44,7 +44,7 @@ header {
 main {
   grid-area: main;
   display: grid;
-  grid-template-columns: 300px 1fr;
+  grid-template-columns: 400px 1fr;
 }
 
 nav {
@@ -246,7 +246,8 @@ textarea {
 }
 
 footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   grid-area: footer;
-  text-align: center;
-  padding-top: 1rem;
 }

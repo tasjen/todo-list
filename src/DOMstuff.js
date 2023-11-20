@@ -304,6 +304,7 @@ function createTaskAdder(projectObject) {
   name_input.id = "name-input";
   name_input.placeholder = "Task name";
   name_input.required = true;
+  name_input.maxLength = 32;
   const description_input = document.createElement("textarea");
   description_input.id = "description-input";
   description_input.placeholder = "Task description";
@@ -472,6 +473,7 @@ function createProjectAdder() {
   name_input.id = "project-name-input";
   name_input.placeholder = "Task name";
   name_input.required = true;
+  name_input.maxLength = 16;
   const confirm_button = document.createElement("button");
   confirm_button.type = "Add";
   confirm_button.id = "confirm-project";
