@@ -1,6 +1,6 @@
 import Project from "./project.js";
 import Task from "./task.js";
-import projectList from "./storage.js";
+import updateStorage, { projectList} from "./storage.js";
 import { isSameDay, isSameWeek, format } from "date-fns";
 
 const all_task = document.querySelector("#all-task");
@@ -177,6 +177,7 @@ function createTaskDOM(taskObject, projectObject) {
   remove.addEventListener("click", () => {
     task.parentElement.removeChild(task);
     projectObject.removeTask(taskObject.name);
+    updateStorage();
     resetTaskAdder();
     checkEmptyTaskMessage();
   });
@@ -328,20 +329,26 @@ function createTaskAdder(projectObject) {
         return;
       }
 
-      //add new task to the project object
       const newTaskObject = new Task(
         name_input.value,
         description_input.value,
         new Date(date_input.value),
         priorityValue
-      );
+        );
+
+      //add new task to the project object
       projectObject.addTask(newTaskObject);
+
+      //update the localStorage
+      updateStorage();
+
 
       //add new task to the DOM
       const newTaskDOM = createTaskDOM(newTaskObject, projectObject);
       document.querySelector("#task-list").appendChild(newTaskDOM);
 
       checkEmptyTaskMessage();
+
     } else if (form.type === "edit") {
       //check if the new name is not the same as the old name
       //but the same as other task's name (check unique name)
@@ -357,6 +364,9 @@ function createTaskAdder(projectObject) {
       form.editingTask.setDescription(description_input.value);
       form.editingTask.setDueDate(new Date(date_input.value));
       form.editingTask.setPriority(priorityValue);
+
+      updateStorage();
+
 
       //reload page to update DOM
       clearMainSection();
@@ -423,8 +433,14 @@ function createProjectAdder() {
     }
 
     const newProjectObject = new Project(name_input.value);
+
+    //add new project to projectList
     projectList.push(newProjectObject);
 
+    //update localStorage
+    updateStorage();
+
+    //add new project to the DOM
     const newProjectDOM = createProjectDOM(newProjectObject);
     document.querySelector("#project-list").appendChild(newProjectDOM);
 

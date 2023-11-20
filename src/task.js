@@ -3,7 +3,7 @@ export default class Task {
     this.name = name; //string
     this.description = description; // string
     this.dueDate = dueDate; //Date
-    this.priority = priority; //number 1,2,3
+    this.priority = +priority; //number 1,2,3
   }
   setName(newName) {
     this.name = newName;
