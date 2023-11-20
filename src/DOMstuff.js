@@ -25,14 +25,14 @@ this_week_task.addEventListener("click", () => {
 function loadAllTasks() {
   const task_list = document.querySelector("#task-list");
   for (let projectObject of projectList) {
-    for (let taskObject of projectObject.tasks) {
+    for (let taskObject of projectObject.getTasks()) {
       const today_task = createTaskDOM(taskObject, projectObject);
       const task_detail = today_task.firstChild;
       task_detail.removeChild(task_detail.querySelector(".remove"));
       task_detail.removeChild(task_detail.querySelector(".edit"));
       today_task.querySelector(
         ".task-name"
-      ).textContent += ` (${projectObject.name})`;
+      ).textContent += ` (${projectObject.getName()})`;
       task_list.appendChild(today_task);
     }
   }
@@ -42,15 +42,15 @@ function loadAllTasks() {
 function loadTodayTasks() {
   const task_list = document.querySelector("#task-list");
   for (let projectObject of projectList) {
-    for (let taskObject of projectObject.tasks) {
-      if (isSameDay(taskObject.dueDate, new Date())) {
+    for (let taskObject of projectObject.getTasks()) {
+      if (isSameDay(taskObject.getDueDate(), new Date())) {
         const today_task = createTaskDOM(taskObject, projectObject);
         const task_detail = today_task.firstChild;
         task_detail.removeChild(task_detail.querySelector(".remove"));
         task_detail.removeChild(task_detail.querySelector(".edit"));
         today_task.querySelector(
           ".task-name"
-        ).textContent += ` (${projectObject.name})`;
+        ).textContent += ` (${projectObject.getName()})`;
         task_list.appendChild(today_task);
       }
     }
@@ -62,15 +62,15 @@ function loadTodayTasks() {
 function loadThisWeekTasks() {
   const task_list = document.querySelector("#task-list");
   for (let projectObject of projectList) {
-    for (let taskObject of projectObject.tasks) {
-      if (isSameWeek(taskObject.dueDate, new Date())) {
+    for (let taskObject of projectObject.getTasks()) {
+      if (isSameWeek(taskObject.getDueDate(), new Date())) {
         const this_week_task = createTaskDOM(taskObject, projectObject);
         const task_detail = this_week_task.firstChild;
         task_detail.removeChild(task_detail.querySelector(".remove"));
         task_detail.removeChild(task_detail.querySelector(".edit"));
         this_week_task.querySelector(
           ".task-name"
-        ).textContent += ` (${projectObject.name})`;
+        ).textContent += ` (${projectObject.getName()})`;
         task_list.appendChild(this_week_task);
       }
     }
@@ -82,7 +82,7 @@ function loadThisWeekTasks() {
 function loadTaskList(projectObject) {
   //render project's tasks
   const task_list = document.querySelector("#task-list");
-  for (let taskObject of projectObject.tasks) {
+  for (let taskObject of projectObject.getTasks()) {
     const task = createTaskDOM(taskObject, projectObject);
     task_list.appendChild(task);
   }
@@ -134,11 +134,11 @@ function createTaskDOM(taskObject, projectObject) {
 
   const task_name = document.createElement("p");
   task_name.classList.add("task-name");
-  task_name.textContent = taskObject.name;
+  task_name.textContent = taskObject.getName();
 
   const priority = document.createElement("p");
   priority.classList.add("priority");
-  priority.textContent = ["★", "★ ★", "★ ★ ★"][taskObject.priority - 1];
+  priority.textContent = ["★", "★ ★", "★ ★ ★"][taskObject.getPriority() - 1];
 
   const description_button = document.createElement("p");
   description_button.classList.add("description", "button");
@@ -151,7 +151,7 @@ function createTaskDOM(taskObject, projectObject) {
     } else {
       const pop_up = document.createElement("p");
       pop_up.classList.add("task-description");
-      pop_up.textContent = taskObject.description;
+      pop_up.textContent = taskObject.getDescription();
       task.appendChild(pop_up);
       task.isShowingDescription = true;
       description_button.classList.add("showing");
@@ -160,7 +160,7 @@ function createTaskDOM(taskObject, projectObject) {
 
   const due_date = document.createElement("p");
   due_date.classList.add("due-date");
-  due_date.textContent = taskObject.dueDate.toLocaleDateString("en-GB", {
+  due_date.textContent = taskObject.getDueDate().toLocaleDateString("en-GB", {
     day: "2-digit",
     month: "2-digit",
     year: "numeric",
@@ -174,14 +174,14 @@ function createTaskDOM(taskObject, projectObject) {
 
     //add original value to all inputs
     document.querySelector("#confirm-task").textContent = "Submit";
-    document.querySelector("#name-input").value = taskObject.name;
-    document.querySelector("#description-input").value = taskObject.description;
+    document.querySelector("#name-input").value = taskObject.getName();
+    document.querySelector("#description-input").value = taskObject.getDescription();
     document.querySelector("#date-input").value = format(
-      taskObject.dueDate,
+      taskObject.getDueDate(),
       "yyyy-MM-dd"
     );
     document.querySelector(
-      `input[type="radio"][value="${taskObject.priority}"]`
+      `input[type="radio"][value="${taskObject.getPriority()}"]`
     ).checked = true;
 
     document.querySelector("#task-form").type = "edit";
@@ -193,7 +193,7 @@ function createTaskDOM(taskObject, projectObject) {
   remove.textContent = "❌";
   remove.addEventListener("click", () => {
     task.parentElement.removeChild(task);
-    projectObject.removeTask(taskObject.name);
+    projectObject.removeTask(taskObject);
     updateStorage();
     resetTaskAdder();
     checkEmptyTaskMessage();
@@ -217,7 +217,7 @@ function createProjectDOM(projectObject) {
 
   const project_name = document.createElement("p");
   project_name.classList.add("project-name");
-  project_name.textContent = projectObject.name;
+  project_name.textContent = projectObject.getName();
 
   project.render = () => loadTaskList(projectObject);
   project.addEventListener("click", () => {
@@ -232,7 +232,7 @@ function createProjectDOM(projectObject) {
 
     //add original value to all inputs
     document.querySelector("#confirm-project").textContent = "Submit";
-    document.querySelector("#project-name-input").value = projectObject.name;
+    document.querySelector("#project-name-input").value = projectObject.getName();
 
     //add edit-state and the projectObject to the form
     const form = document.querySelector("#project-form");
@@ -376,13 +376,13 @@ function createTaskAdder(projectObject) {
     event.preventDefault();
 
     //get the checked value(priority) from all radio buttons
-    const priorityValue = +Array.from(
+    const priorityValue = Array.from(
       document.querySelectorAll("input[name='priority']")
     ).find((radio) => radio.checked === true).value;
 
     if (form.type === "add") {
       //check unique task name in a project
-      if (projectObject.tasks.some((task) => task.name === name_input.value)) {
+      if (projectObject.getTasks().some((task) => task.getName() === name_input.value)) {
         alert("Task name must be unique");
         name_input.select();
         return;
@@ -391,7 +391,7 @@ function createTaskAdder(projectObject) {
       const newTaskObject = new Task(
         name_input.value,
         description_input.value,
-        new Date(date_input.value),
+        date_input.value,
         priorityValue
       );
 
@@ -410,8 +410,8 @@ function createTaskAdder(projectObject) {
       //check if the new name is not the same as the old name
       //but the same as other task's name (check unique name)
       if (
-        name_input.value !== form.editingTask.name &&
-        projectObject.tasks.some((task) => task.name === name_input.value)
+        name_input.value !== form.editingTask.getName() &&
+        projectObject.getTasks().some((task) => task.getName() === name_input.value)
       ) {
         alert("Task name must be unique");
         name_input.select();
@@ -421,7 +421,7 @@ function createTaskAdder(projectObject) {
       //set all new property of the taskObject that is being edited
       form.editingTask.setName(name_input.value);
       form.editingTask.setDescription(description_input.value);
-      form.editingTask.setDueDate(new Date(date_input.value));
+      form.editingTask.setDueDate(date_input.value);
       form.editingTask.setPriority(priorityValue);
 
       updateStorage();
@@ -487,7 +487,7 @@ function createProjectAdder() {
 
     if (form.type === "add") {
       //check unique project name
-      if (projectList.some((project) => project.name === newProjectName)) {
+      if (projectList.some((project) => project.getName() === newProjectName)) {
         alert("Project name must be unique");
         name_input.select();
         return;
@@ -511,8 +511,8 @@ function createProjectAdder() {
       //check if the new name is not the same as the old name
       //but the same as other project's name (check unique name)
       if (
-        name_input.value !== form.editingProject.name &&
-        projectList.some((project) => project.name === newProjectName)
+        name_input.value !== form.editingProject.getName() &&
+        projectList.some((project) => project.getName() === newProjectName)
       ) {
         alert("Project name must be unique");
         name_input.select();
@@ -570,10 +570,13 @@ function resetProjectAdder() {
 
 function changePageTo(pageNode) {
   if (!pageNode.classList.contains("on-page")) {
+
     clearMainSection();
     resetProjectAdder();
-    document.querySelector("#tab-name").textContent =
-      pageNode.firstChild.textContent;
+
+    const tab_name = document.querySelector("#tab-name")
+    tab_name.textContent = pageNode.firstChild.textContent;
+
     pageNode.render();
     checkEmptyTaskMessage();
     const previous_page = document.querySelector(".on-page");
@@ -585,6 +588,7 @@ function changePageTo(pageNode) {
 function clearMainSection() {
   const main_section = document.querySelector("#main-section");
   const task_list = document.querySelector("#task-list");
+  const task_adder = document.querySelector("#task-adder")
 
   //remove every element from main section except page header (tab name)
   while (task_list.firstChild) {
@@ -592,8 +596,8 @@ function clearMainSection() {
   }
 
   //remove task-adder (if exist)
-  if (document.querySelector("#task-adder")) {
-    main_section.removeChild(document.querySelector("#task-adder"));
+  if (task_adder) {
+    main_section.removeChild(task_adder);
   }
 }
 

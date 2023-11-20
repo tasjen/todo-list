@@ -1,7 +1,16 @@
 export default class Project {
+
   constructor(name) {
     this.name = name; //string
-    this.tasks = []; //array
+    this.tasks = new Array(); //array
+  }
+
+  getName() {
+    return this.name;
+  }
+
+  getTasks(){
+    return this.tasks;
   }
 
   setName(newName) {
@@ -9,14 +18,12 @@ export default class Project {
   }
 
   addTask(taskObject) { 
-    this.tasks.push(taskObject);
+    this.getTasks().push(taskObject);
     console.log("Add", taskObject);
   }
 
-  removeTask(taskName) {
-    const removedTask = this.tasks.find(task => task.name === taskName);
-    console.log("Remove", removedTask);
-
-    this.tasks = this.tasks.filter((task) => task.name !== taskName);
+  removeTask(taskObject) {
+    this.getTasks().splice(this.getTasks().indexOf(taskObject), 1);
+    console.log("Remove", taskObject);
   }
 }

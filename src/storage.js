@@ -1,8 +1,9 @@
 import Task from "./task.js";
 import Project from "./project.js";
 
-//get projectList when load page
+//get DOMstuff module the projectList when load page
 let projectList = getProjectList();
+export { projectList };
 
 //projectList to json string then add to localStorage
 export default function updateStorage() {
@@ -19,16 +20,17 @@ function getProjectList() {
         const taskObject = new Task(
           task.name,
           task.description,
-          new Date(task.dueDate),
-          +task.priority
+          task.dueDate,
+          task.priority
         );
         projectObject.addTask(taskObject);
       }
       projectList.push(projectObject);
     }
+  } else {
+    //add default project if local storage is empty
+    projectList.push(new Project("Default"));
   }
 
   return projectList;
 }
-
-export { projectList, getProjectList };
