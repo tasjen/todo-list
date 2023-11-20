@@ -1,6 +1,6 @@
 import Project from "./project.js";
 import Task from "./task.js";
-import updateStorage, { projectList} from "./storage.js";
+import updateStorage, { projectList } from "./storage.js";
 import { isSameDay, isSameWeek, format } from "date-fns";
 
 const all_task = document.querySelector("#all-task");
@@ -22,7 +22,6 @@ this_week_task.addEventListener("click", () => {
 });
 
 export default class DOMstuff {
-
   static loadAllTasks() {
     const task_list = document.querySelector("#task-list");
     for (let projectObject of projectList) {
@@ -95,11 +94,21 @@ export default class DOMstuff {
   }
 
   static loadProjectList() {
-    //render project list on nav bar
     const project_list = document.querySelector("#project-list");
+    //remove project list and project adder from the DOM
+    while (project_list.firstChild) {
+      project_list.removeChild(project_list.firstChild);
+    }
+    //render project list on nav bar
     for (let projectObject of projectList) {
       const project = createProjectDOM(projectObject);
       project_list.appendChild(project);
+    }
+
+    //remove project adder if exists
+    const task_adder = document.querySelector("#project-adder");
+    if (task_adder) {
+      project_list.parentElement.removeChild(task_adder);
     }
 
     //render project adder
@@ -197,11 +206,37 @@ function createTaskDOM(taskObject, projectObject) {
 function createProjectDOM(projectObject) {
   const project = document.createElement("li");
   project.classList.add("project");
-  project.textContent = projectObject.name;
+
+  const project_name = document.createElement("p");
+  project_name.classList.add("project-name");
+  project_name.textContent = projectObject.name;
+
   project.render = () => DOMstuff.loadTaskList(projectObject);
-  project.addEventListener("click", () => {
+  project.addEventListener("click", (event) => {
     changeTabTo(project);
+    if (event.target === edit) edit.click();
   });
+
+  const edit = document.createElement("p");
+  edit.classList.add("edit", "button");
+  edit.textContent = "📝";
+  edit.addEventListener("click", () => {
+    document.querySelector("#add-project").click();
+
+    //add original value to all inputs
+    document.querySelector("#confirm-project").textContent = "Submit";
+    document.querySelector("#project-name-input").value = projectObject.name;
+
+    //add edit-state and the projectObject to the form
+    const form = document.querySelector("#project-form");
+    form.type = "edit";
+    form.editingProject = projectObject;
+    form.editingNameNode = project_name;
+  });
+
+  project.appendChild(project_name);
+  project.appendChild(edit);
+
   return project;
 }
 
@@ -334,7 +369,7 @@ function createTaskAdder(projectObject) {
         description_input.value,
         new Date(date_input.value),
         priorityValue
-        );
+      );
 
       //add new task to the project object
       projectObject.addTask(newTaskObject);
@@ -342,22 +377,22 @@ function createTaskAdder(projectObject) {
       //update the localStorage
       updateStorage();
 
-
       //add new task to the DOM
       const newTaskDOM = createTaskDOM(newTaskObject, projectObject);
       document.querySelector("#task-list").appendChild(newTaskDOM);
 
       checkEmptyTaskMessage();
-
     } else if (form.type === "edit") {
       //check if the new name is not the same as the old name
       //but the same as other task's name (check unique name)
-      if (name_input.value !== form.editingTask.name
-        && projectObject.tasks.some((task) => task.name === name_input.value)) {
-          alert("Task name must be unique");
-          name_input.select();
-          return;
-        }
+      if (
+        name_input.value !== form.editingTask.name &&
+        projectObject.tasks.some((task) => task.name === name_input.value)
+      ) {
+        alert("Task name must be unique");
+        name_input.select();
+        return;
+      }
 
       //set all new property of the taskObject that is being edited
       form.editingTask.setName(name_input.value);
@@ -366,7 +401,6 @@ function createTaskAdder(projectObject) {
       form.editingTask.setPriority(priorityValue);
 
       updateStorage();
-
 
       //reload page to update DOM
       clearMainSection();
@@ -401,13 +435,13 @@ function createProjectAdder() {
   add_project_button.textContent = "+ Add project";
   add_project_button.addEventListener("click", () => {
     add_project_button.classList.add("hide");
-    add_project_form.classList.remove("hide");
+    form.classList.remove("hide");
     name_input.focus();
   });
 
-  const add_project_form = document.createElement("form");
-  add_project_form.id = "project-form";
-  add_project_form.classList.add("hide");
+  const form = document.createElement("form");
+  form.id = "project-form";
+  form.classList.add("hide");
 
   const name_input = document.createElement("input");
   name_input.type = "text";
@@ -423,41 +457,66 @@ function createProjectAdder() {
   cancel_button.id = "cancel-project";
   cancel_button.textContent = "Cancel";
 
-  add_project_form.addEventListener("submit", (event) => {
+  form.addEventListener("submit", (event) => {
     event.preventDefault();
-    //check unique project name
-    if (projectList.some((project) => project.name === name_input.value)) {
-      alert("Project name must be unique");
-      name_input.select();
-      return;
+    const newProjectName = name_input.value;
+
+    if (form.type === "add") {
+      //check unique project name
+      if (projectList.some((project) => project.name === newProjectName)) {
+        alert("Project name must be unique");
+        name_input.select();
+        return;
+      }
+
+      const newProjectObject = new Project(newProjectName);
+
+      //add new project to projectList
+      projectList.push(newProjectObject);
+
+      //update localStorage
+      updateStorage();
+
+      //add new project to the DOM
+      const newProjectDOM = createProjectDOM(newProjectObject);
+      document.querySelector("#project-list").appendChild(newProjectDOM);
+
+      //change to the created tab
+      changeTabTo(newProjectDOM);
+
+    } else if (form.type === "edit") {
+      //check if the new name is not the same as the old name
+      //but the same as other project's name (check unique name)
+      if (
+        name_input.value !== form.editingProject.name &&
+        projectList.some((project) => project.name === newProjectName)
+      ) {
+        alert("Project name must be unique");
+        name_input.select();
+        return;
+      }
+
+      form.editingProject.setName(newProjectName);
+
+      updateStorage();
+
+      //update DOM
+      form.editingNameNode.textContent = newProjectName;
+      document.querySelector("#tab-name").textContent = newProjectName;
+      resetProjectAdder();
     }
-
-    const newProjectObject = new Project(name_input.value);
-
-    //add new project to projectList
-    projectList.push(newProjectObject);
-
-    //update localStorage
-    updateStorage();
-
-    //add new project to the DOM
-    const newProjectDOM = createProjectDOM(newProjectObject);
-    document.querySelector("#project-list").appendChild(newProjectDOM);
-
-
-    changeTabTo(newProjectDOM);
   });
 
   cancel_button.addEventListener("click", () => {
     resetProjectAdder();
   });
 
-  add_project_form.appendChild(name_input);
-  add_project_form.appendChild(confirm_button);
-  add_project_form.appendChild(cancel_button);
+  form.appendChild(name_input);
+  form.appendChild(confirm_button);
+  form.appendChild(cancel_button);
 
   project_adder.appendChild(add_project_button);
-  project_adder.appendChild(add_project_form);
+  project_adder.appendChild(form);
 
   return project_adder;
 }
@@ -476,20 +535,22 @@ function resetTaskAdder() {
 }
 
 function resetProjectAdder() {
-  //remove project adder from the DOM
-  const project_adder = document.querySelector("#project-adder");
-  project_adder.parentElement.removeChild(project_adder);
+  const form = document.querySelector("#project-form");
+  const add_project_button = document.querySelector("#add-project");
 
-  //create and add project adder to the DOM
-  const project_list = document.querySelector("#project-list");
-  project_list.insertAdjacentElement("afterend", createProjectAdder());
+  form.classList.add("hide");
+  form.reset();
+  form.type = "add";
+
+  add_project_button.classList.remove("hide");
 }
 
 function changeTabTo(pageNode) {
   if (!pageNode.classList.contains("on-page")) {
     clearMainSection();
     resetProjectAdder();
-    document.querySelector("#tab-name").textContent = pageNode.textContent;
+    document.querySelector("#tab-name").textContent =
+      pageNode.firstChild.textContent;
     pageNode.render();
     checkEmptyTaskMessage();
     const previous_page = document.querySelector(".on-page");
