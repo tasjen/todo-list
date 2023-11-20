@@ -8,8 +8,7 @@ export default class Project {
   getName() {
     return this.name;
   }
-
-  getTasks(){
+  getTasks() {
     return this.tasks;
   }
 
@@ -19,11 +18,9 @@ export default class Project {
 
   addTask(taskObject) { 
     this.getTasks().push(taskObject);
-    console.log("Add", taskObject);
   }
 
   removeTask(taskObject) {
     this.getTasks().splice(this.getTasks().indexOf(taskObject), 1);
-    console.log("Remove", taskObject);
   }
 }
