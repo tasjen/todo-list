@@ -117,7 +117,7 @@ function loadProjectList() {
   
   //render project adder
   project_list.insertAdjacentElement("afterend", createProjectAdder());
-  
+
   //render default project page
   changePageTo(document.querySelector("#default-project"));
 
@@ -473,7 +473,7 @@ function createProjectAdder() {
   name_input.placeholder = "Task name";
   name_input.required = true;
   const confirm_button = document.createElement("button");
-  confirm_button.type = "submit";
+  confirm_button.type = "Add";
   confirm_button.id = "confirm-project";
   confirm_button.textContent = "Add";
   const cancel_button = document.createElement("button");
