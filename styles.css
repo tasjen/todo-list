@@ -73,6 +73,11 @@ nav li {
   border-left: 4px solid black;
 }
 
+#project-list > .project {
+  display: flex;
+  justify-content: space-between;
+}
+
 #add-project,
 #add-task {
   text-align: start;
@@ -167,7 +172,7 @@ nav li {
   margin-left: 1rem;
 }
 
-.edit {
+.task .edit {
   margin-right: 1rem;
 }
 
