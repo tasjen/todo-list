@@ -44,7 +44,7 @@ header {
 main {
   grid-area: main;
   display: grid;
-  grid-template-columns: 400px 1fr;
+  grid-template-columns: 350px 1fr;
 }
 
 nav {
@@ -174,12 +174,14 @@ nav li {
   margin-left: 1rem;
 }
 
-.project .edit {
-  margin-right: 0.5rem;
+.project > div {
+  display: flex;
+  width: 30px;
+  margin-right: 1rem;
 }
 
-#default-project > .edit {
-  margin-right: 28px;
+.project .edit {
+  margin-right: 0.5rem;
 }
 
 #task-form > div {

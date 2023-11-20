@@ -104,7 +104,8 @@ function loadProjectList() {
     const project = createProjectDOM(projectObject);
     if (projectObject === projectList[0]){
       project.id = "default-project";
-      project.removeChild(project.querySelector(".remove"));
+      const remove_button = project.querySelector(".remove");
+      remove_button.parentElement.removeChild(remove_button);
     }
     project_list.appendChild(project);
   }
@@ -257,9 +258,12 @@ function createProjectDOM(projectObject) {
     resetProjectAdder();
   });
 
+  const div = document.createElement("div");
+  div.appendChild(edit);
+  div.appendChild(remove);
+
   project.appendChild(project_name);
-  project.appendChild(edit);
-  project.appendChild(remove);
+  project.appendChild(div);
 
   return project;
 }
