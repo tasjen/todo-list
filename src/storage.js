@@ -12,7 +12,7 @@ export default function updateStorage() {
 function getProjectList() {
   const projectList = [];
 
-  if (localStorage.length !== 0) {
+  if (localStorage.projectList) {
     for (let project of JSON.parse(localStorage.projectList)) {
       const projectObject = new Project(project.name);
       for (let task of project.tasks) {

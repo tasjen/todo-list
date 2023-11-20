@@ -178,6 +178,10 @@ nav li {
   margin-right: 0.5rem;
 }
 
+#default-project > .edit {
+  margin-right: 28px;
+}
+
 #task-form > div {
   display: flex;
   flex-direction: column;
