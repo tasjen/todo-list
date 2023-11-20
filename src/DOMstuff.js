@@ -212,15 +212,19 @@ function createProjectDOM(projectObject) {
   project_name.textContent = projectObject.name;
 
   project.render = () => DOMstuff.loadTaskList(projectObject);
-  project.addEventListener("click", (event) => {
-    changeTabTo(project);
-    if (event.target === edit) edit.click();
-  });
+  project.addEventListener(
+    "click",
+    () => {
+      changeTabTo(project);
+      console.log("project clicked");
+    },
+    true
+  ); //do capturing phase only
 
   const edit = document.createElement("p");
   edit.classList.add("edit", "button");
   edit.textContent = "📝";
-  edit.addEventListener("click", () => {
+  edit.addEventListener("click", (event) => {
     document.querySelector("#add-project").click();
 
     //add original value to all inputs
@@ -234,8 +238,19 @@ function createProjectDOM(projectObject) {
     form.editingNameNode = project_name;
   });
 
+  const remove = document.createElement("p");
+  remove.classList.add("remove", "button");
+  remove.textContent = "❌";
+  remove.addEventListener("click", () => {
+    project.parentElement.removeChild(project);
+    projectList.splice(projectList.indexOf(projectObject), 1);
+    updateStorage();
+    resetProjectAdder();
+  });
+
   project.appendChild(project_name);
   project.appendChild(edit);
+  project.appendChild(remove);
 
   return project;
 }
@@ -483,7 +498,6 @@ function createProjectAdder() {
 
       //change to the created tab
       changeTabTo(newProjectDOM);
-
     } else if (form.type === "edit") {
       //check if the new name is not the same as the old name
       //but the same as other project's name (check unique name)

@@ -75,7 +75,9 @@ nav li {
 
 #project-list > .project {
   display: flex;
-  justify-content: space-between;
+}
+.project-name {
+  margin-right: auto;
 }
 
 #add-project,
@@ -172,8 +174,8 @@ nav li {
   margin-left: 1rem;
 }
 
-.task .edit {
-  margin-right: 1rem;
+.project .edit {
+  margin-right: 0.5rem;
 }
 
 #task-form > div {
