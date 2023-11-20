@@ -75,6 +75,7 @@ nav li {
 
 #project-list > .project {
   display: flex;
+  padding-right: 1rem;
 }
 .project-name {
   margin-right: auto;
